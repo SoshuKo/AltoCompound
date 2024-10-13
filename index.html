@@ -18,7 +18,17 @@
             const femaleVowels = ['i', 'ü', 'e', 'ö'];
             const maleVowels = ['ï', 'u', 'ë', 'o'];
             const femaleReplacement = { 'ï': 'i', 'u': 'ü', 'ë': 'e', 'o': 'ö', 'n': 'ņ', 'k': 'çh', 'x': 'ģ', 'k': 'ç', 'l': 'ļ' };
-            const maleReplacement = { 'i': 'ï', 'ü': 'u', 'e': 'ë', 'ö': 'o', 'ņ': 'n', 'çh': 'x', 'ç': 'k', 'ģ': 'g', 'ļ': 'l' };
+            const maleReplacement = { 
+            'i': 'ï', 
+            'ü': 'u', 
+            'e': 'ë', 
+            'ö': 'o', 
+            'ņ': 'n', 
+            'çh': 'x',  // ここを修正
+            'ç': 'k',   // çhとçの置換は異なるもの
+            'ģ': 'g', 
+            'ļ': 'l' 
+}        ;
 
             function replaceVowels(word, replacement) {
                 return word.split('').map(char => replacement[char] || char).join('');
