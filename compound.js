@@ -1,71 +1,79 @@
-function generateCompound() {
-    let wordA = document.getElementById('wordA').value;
-    let wordB = document.getElementById('wordB').value;
-    let language = document.getElementById('language').value;
-    let aspect = document.getElementById('aspect').value;
-    let plural = document.getElementById('plural').checked;
-    let singleWord = document.getElementById('singleWord').checked;
+function transformWords(language, isPlural, isOneWord, aspect, wordA, wordB) {
+    let vowelsFeminine = ["i", "ü", "e", "ö"];
+    let vowelsMasculine = ["ï", "u", "ë", "o"];
+    let vowelAOnly = "a";
+    let suffixA = "";
+    let suffixB = "";
 
-    let result = "";
+    function feminineSubstitution(word) {
+        return word.replace(/ï/g, 'i').replace(/u/g, 'ü').replace(/ë/g, 'e').replace(/o/g, 'ö')
+                   .replace(/n/g, 'ņ').replace(/k/g, 'ç').replace(/g/g, 'ģ').replace(/x/g, 'çh').replace(/l/g, 'ļ');
+    }
 
-    // トルスカ語の場合
-    if (language === 'torsk') {
-        if (hasVowels(wordB, 'iüöe')) {
-            wordA = applyReplacementRules(wordA, femaleReplaceTorsk);
-            wordA += plural ? 'ļöņ' : 'ņö';
-            wordB += plural ? 'ra' : '';  // 単語Bの複数形語尾に「ra」を追加
-        } else if (hasVowels(wordB, 'ïuëo')) {
-            wordA = applyReplacementRules(wordA, maleReplaceTorsk);
-            wordA += plural ? 'ron' : 'no';
-            wordB += plural ? 'ra' : '';  // 単語Bの複数形語尾に「ra」を追加
-        } else if (wordB.includes('a')) {
-            wordA += plural ? 'ron' : 'no';
-            wordB += plural ? 'ra' : '';  // 単語Bの複数形語尾に「ra」を追加
-        }
+    function masculineSubstitution(word) {
+        return word.replace(/i/g, 'ï').replace(/ü/g, 'u').replace(/e/g, 'ë').replace(/ö/g, 'o')
+                   .replace(/ņ/g, 'n').replace(/çh/g, 'x').replace(/ç/g, 'k').replace(/ģ/g, 'g').replace(/ļ/g, 'l');
+    }
 
-        if (wordA.endsWith('am')) {
-            if (plural) {
-                wordA = wordA.slice(0, -2) + (aspect === 'imperfective' ? 'cala' : 'calta');
-            } else {
-                wordA = wordA.slice(0, -2) + (aspect === 'imperfective' ? 'ca' : 'cta');
+    function appendSuffix(word, suffix) {
+        return word + suffix;
+    }
+
+    // Apply gender vowel transformation based on wordB vowels
+    if (vowelsFeminine.some(v => wordB.includes(v))) {
+        wordA = feminineSubstitution(wordA);
+        suffixA = isPlural ? "ļöņ" : "ņö";
+    } else if (vowelsMasculine.some(v => wordB.includes(v))) {
+        wordA = masculineSubstitution(wordA);
+        suffixA = isPlural ? "ron" : "no";
+    } else if (wordB.includes(vowelAOnly)) {
+        suffixA = isPlural ? "ron" : "no";  // For masculine case with 'a'
+    }
+
+    // Handle plurals and wordA ending replacements
+    if (isPlural) {
+        suffixB = "ra";
+    }
+    if (wordA.endsWith("-am")) {
+        if (!isPlural) {
+            if (aspect === "imperfect") {
+                wordA = wordA.replace("-am", "ca");
+            } else if (aspect === "perfect") {
+                wordA = wordA.replace("-am", "cta");
             }
-        }
-
-        if (singleWord) {
-            result = wordA + wordB;
         } else {
-            result = wordA + " " + wordB;
+            if (aspect === "imperfect") {
+                wordA = wordA.replace("-am", "cala");
+            } else if (aspect === "perfect") {
+                wordA = wordA.replace("-am", "calta");
+            }
+            suffixB = "ra";
+        }
+    } else if (wordA.endsWith("-ïm") || wordA.endsWith("-im")) {
+        if (!isPlural) {
+            if (aspect === "imperfect") {
+                wordA = wordA.replace(/-ïm$/, "ka").replace(/-im$/, "ça");
+            } else if (aspect === "perfect") {
+                wordA = wordA.replace(/-ïm$/, "kta").replace(/-im$/, "çta");
+            }
+        } else {
+            if (aspect === "imperfect") {
+                wordA = wordA.replace(/-ïm$/, "kala").replace(/-im$/, "çala");
+            } else if (aspect === "perfect") {
+                wordA = wordA.replace(/-ïm$/, "kalta").replace(/-im$/, "çalta");
+            }
+            suffixB = "ra";
         }
     }
 
-    // ドゥルグ語の場合（既存コード）
-    if (language === 'durg') {
-        if (hasVowels(wordB, 'iüöe')) {
-            wordA = applyReplacementRules(wordA, femaleReplaceDurg);
-            wordA += plural ? '’ün' : 'nü';
-            wordB += plural ? '’i' : '';
-        } else if (hasVowels(wordB, 'ïuëo')) {
-            wordA = applyReplacementRules(wordA, maleReplaceDurg);
-            wordA += plural ? '’un' : 'nu';
-            wordB += plural ? '’u' : '';
-        } else if (wordB.includes('a')) {
-            wordA += plural ? '’un' : 'nu';
-        }
-
-        if (wordA.endsWith('um') || wordA.endsWith('üm')) {
-            if (plural) {
-                wordA = wordA.slice(0, -2) + (aspect === 'imperfective' ? (wordA.endsWith('üm') ? 'dülü' : 'dulu') : (wordA.endsWith('üm') ? 'düllü' : 'dullu'));
-            } else {
-                wordA = wordA.slice(0, -2) + (aspect === 'imperfective' ? (wordA.endsWith('üm') ? 'dü' : 'du') : (wordA.endsWith('üm') ? 'drü' : 'dru'));
-            }
-        }
-
-        if (singleWord) {
-            result = wordA + wordB;
-        } else {
-            result = wordA + " " + wordB;
-        }
+    // Handle concatenation or spacing between words
+    if (isOneWord) {
+        wordA = appendSuffix(wordA, suffixA);
+        wordB = appendSuffix(wordB, suffixB);
+        return wordA + wordB;
+    } else {
+        wordA = appendSuffix(wordA, suffixA);
+        wordB = appendSuffix(wordB, suffixB);
+        return wordA + " " + wordB;
     }
-
-    document.getElementById('result').innerText = result;
 }
