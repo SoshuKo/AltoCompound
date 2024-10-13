@@ -17,8 +17,8 @@
 
             const femaleVowels = ['i', 'ü', 'e', 'ö'];
             const maleVowels = ['ï', 'u', 'ë', 'o'];
-            const femaleReplacement = { 'ï': 'i', 'u': 'ü', 'ë': 'e', 'o': 'ö', 'n': 'ņ', 'k': 'ç', 'g': 'ģ', 'x': 'çh', 'l': 'ļ' };
-            const maleReplacement = { 'i': 'ï', 'ü': 'u', 'e': 'ë', 'ö': 'o', 'ņ': 'n', 'çh': 'x', 'ç': 'k', 'ģ': 'g', 'ļ': 'l' };
+            const femaleReplacement = { 'ï': 'i', 'u': 'ü', 'ë': 'e', 'o': 'ö', 'n': 'ņ', 'k': 'ç', 'g': 'ģ', 'çh': 'x', 'l': 'ļ' };
+            const maleReplacement = { 'i': 'ï', 'ü': 'u', 'e': 'ë', 'ö': 'o', 'ņ': 'n', 'x': 'çh', 'ç': 'k', 'ģ': 'g', 'ļ': 'l' };
 
             function replaceVowels(word, replacement) {
                 return word.split('').map(char => replacement[char] || char).join('');
@@ -46,35 +46,35 @@
             } else if (nounType === "形容詞/自動詞分詞+名詞") {
                 if (!singleWord) {
                     if (aspect === "未完了相") {
-                        transformedWordA = wordA.replace('-am', 'ca');
+                        transformedWordA = wordA.replace('-am', plural ? 'cala' : 'ca');
                     } else if (aspect === "完了相") {
-                        transformedWordA = wordA.replace('-am', 'cta');
+                        transformedWordA = wordA.replace('-am', plural ? 'calta' : 'cta');
                     }
                     transformedWordB += 'ra';
                 } else {
                     if (femaleVowels.some(v => wordB.includes(v))) {
-                        transformedWordA = replaceVowels(wordA.replace('-am', aspect === "未完了相" ? 'ca' : 'cta'), femaleReplacement);
+                        transformedWordA = replaceVowels(wordA.replace('-am', aspect === "未完了相" ? (plural ? 'cala' : 'ca') : (plural ? 'calta' : 'cta')), femaleReplacement);
                     } else if (maleVowels.some(v => wordB.includes(v))) {
-                        transformedWordA = replaceVowels(wordA.replace('-am', aspect === "未完了相" ? 'ca' : 'cta'), maleReplacement);
+                        transformedWordA = replaceVowels(wordA.replace('-am', aspect === "未完了相" ? (plural ? 'cala' : 'ca') : (plural ? 'calta' : 'cta')), maleReplacement);
                     } else {
-                        transformedWordA = wordA.replace('-am', aspect === "未完了相" ? 'ca' : 'cta');
+                        transformedWordA = wordA.replace('-am', aspect === "未完了相" ? (plural ? 'cala' : 'ca') : (plural ? 'calta' : 'cta'));
                     }
                 }
             } else if (nounType === "他動詞分詞+名詞") {
                 if (!singleWord) {
                     if (aspect === "未完了相") {
-                        transformedWordA = wordA.replace(/-ïm|-im/g, match => match === '-ïm' ? 'ka' : 'ça');
+                        transformedWordA = wordA.replace(/-ïm|-im/g, match => match === '-ïm' ? (plural ? 'kala' : 'ka') : (plural ? 'çala' : 'ça'));
                     } else if (aspect === "完了相") {
-                        transformedWordA = wordA.replace(/-ïm|-im/g, match => match === '-ïm' ? 'kta' : 'çta');
+                        transformedWordA = wordA.replace(/-ïm|-im/g, match => match === '-ïm' ? (plural ? 'kalta' : 'kta') : (plural ? 'çalta' : 'çta'));
                     }
                     transformedWordB += 'ra';
                 } else {
                     if (femaleVowels.some(v => wordB.includes(v))) {
-                        transformedWordA = replaceVowels(wordA.replace(/-ïm|-im/g, match => match === '-ïm' ? 'ka' : 'ça'), femaleReplacement);
+                        transformedWordA = replaceVowels(wordA.replace(/-ïm|-im/g, match => match === '-ïm' ? (aspect === "未完了相" ? (plural ? 'kala' : 'ka') : (plural ? 'kalta' : 'kta')) : (aspect === "未完了相" ? (plural ? 'çala' : 'ça') : (plural ? 'çalta' : 'çta'))), femaleReplacement);
                     } else if (maleVowels.some(v => wordB.includes(v))) {
-                        transformedWordA = replaceVowels(wordA.replace(/-ïm|-im/g, match => match === '-ïm' ? 'ka' : 'ça'), maleReplacement);
+                        transformedWordA = replaceVowels(wordA.replace(/-ïm|-im/g, match => match === '-ïm' ? (aspect === "未完了相" ? (plural ? 'kala' : 'ka') : (plural ? 'kalta' : 'kta')) : (aspect === "未完了相" ? (plural ? 'çala' : 'ça') : (plural ? 'çalta' : 'çta'))), maleReplacement);
                     } else {
-                        transformedWordA = wordA.replace(/-ïm|-im/g, match => match === '-ïm' ? 'ka' : 'ça');
+                        transformedWordA = wordA.replace(/-ïm|-im/g, match => match === '-ïm' ? (aspect === "未完了相" ? (plural ? 'kala' : 'ka') : (plural ? 'kalta' : 'kta')) : (aspect === "未完了相" ? (plural ? 'çala' : 'ça') : (plural ? 'çalta' : 'çta')));
                     }
                 }
             }
