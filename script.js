@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", function () {
-  // 要素を取得
   const wordAInput = document.getElementById("wordA");
   const wordBInput = document.getElementById("wordB");
   const languageSelect = document.getElementById("language");
