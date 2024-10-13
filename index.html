@@ -7,37 +7,33 @@
 </head>
 <body>
     <h1>トルスカ語・ドゥルグ語複合名詞作成機</h1>
-    <form id="word-form">
+    <form id="wordForm">
         <label for="wordA">単語A:</label>
-        <input type="text" id="wordA" name="wordA"><br><br>
-
+        <input type="text" id="wordA" required><br><br>
+        
         <label for="wordB">単語B:</label>
-        <input type="text" id="wordB" name="wordB"><br><br>
-
-        <label for="language">言語選択:</label>
-        <select id="language">
-            <option value="torsk">トルスカ語</option>
-            <option value="durg">ドゥルグ語</option>
+        <input type="text" id="wordB" required><br><br>
+        
+        <label for="language">言語を選択:</label>
+        <select id="language" required>
+            <option value="トルスカ語">トルスカ語</option>
+            <option value="ドゥルグ語">ドゥルグ語</option>
+        </select><br><br>
+        
+        <label for="aspect">相を選択:</label>
+        <select id="aspect" required>
+            <option value="未完了相">未完了相</option>
+            <option value="完了相">完了相</option>
         </select><br><br>
 
-        <label for="aspect">動詞の相:</label>
-        <select id="aspect">
-            <option value="imperfective">未完了相</option>
-            <option value="perfective">完了相</option>
-        </select><br><br>
+        <input type="checkbox" id="plural"> 複数形<br><br>
+        <input type="checkbox" id="singleWord"> 1語にする<br><br>
 
-        <label for="plural">複数形:</label>
-        <input type="checkbox" id="plural"><br><br>
-
-        <label for="singleWord">1語にする:</label>
-        <input type="checkbox" id="singleWord"><br><br>
-
-        <button type="button" onclick="generateCompound()">生成</button>
+        <button type="submit">生成</button>
     </form>
 
-    <h2>結果:</h2>
-    <p id="result"></p>
+    <p id="result">結果: </p>
 
-    <script src="compound.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
