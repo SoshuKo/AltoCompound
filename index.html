@@ -79,16 +79,19 @@
                 }
             }
 
-            let result = singleWord ? transformedWordA + transformedWordB : transformedWordA + " " + transformedWordB;
+    let result = singleWord ? transformedWordA + transformedWordB : transformedWordA + " " + transformedWordB;
 
-            document.getElementById("result").innerText = result;
+    // ここで、kh→x の置換を追加する
+    result = result.replace(/kh/g, 'x');
 
-            if (result.length > 15) {
-                document.getElementById("recommendation").innerText = "「一語にする」を推奨します。";
-            } else {
-                document.getElementById("recommendation").innerText = "";
-            }
-        }
+    document.getElementById("result").innerText = result;
+
+    if (result.length > 15) {
+        document.getElementById("recommendation").innerText = "「一語にする」を推奨します。";
+    } else {
+        document.getElementById("recommendation").innerText = "";
+    }
+}
     </script>
 </head>
 <body>
