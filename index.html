@@ -4,183 +4,100 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>トルスカ語・ドゥルグ語複合名詞作成機</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        input[type="text"], select { width: 300px; margin: 5px 0; }
+        button { margin-top: 10px; }
+    </style>
 </head>
 <body>
     <h1>トルスカ語・ドゥルグ語複合名詞作成機</h1>
+    <p>名詞の場合は単数形・主格を、動詞・形容詞の場合は不定形を入力してください（=辞書に載っている形を入力してください）。</p>
+    
+    <label for="wordA">単語A:</label>
+    <input type="text" id="wordA"><br>
 
-    <form id="wordForm">
-        <label for="wordA">単語A:</label>
-        <input type="text" id="wordA" name="wordA" required><br><br>
+    <label for="wordB">単語B:</label>
+    <input type="text" id="wordB"><br>
 
-        <label for="wordB">単語B:</label>
-        <input type="text" id="wordB" name="wordB" required><br><br>
+    <label for="language">言語:</label>
+    <select id="language">
+        <option value="トルスカ語">トルスカ語</option>
+        <option value="ドゥルグ語">ドゥルグ語</option>
+    </select><br>
 
-        <label for="language">言語:</label>
-        <select id="language" name="language">
-            <option value="turska">トルスカ語</option>
-            <option value="durg">ドゥルグ語</option>
-        </select><br><br>
+    <label for="aspect">相:</label>
+    <select id="aspect">
+        <option value="未完了相">未完了相</option>
+        <option value="完了相">完了相</option>
+    </select><br>
 
-        <label for="aspect">相:</label>
-        <select id="aspect" name="aspect">
-            <option value="imperfect">未完了相</option>
-            <option value="perfect">完了相</option>
-        </select><br><br>
+    <label><input type="checkbox" id="plural"> 複数形</label><br>
+    <label><input type="checkbox" id="oneWord"> 1語にする</label><br>
 
-        <input type="checkbox" id="plural" name="plural">
-        <label for="plural">複数形</label><br><br>
-
-        <input type="checkbox" id="oneWord" name="oneWord">
-        <label for="oneWord">1語にする</label><br><br>
-
-        <button type="button" onclick="generateWord()">作成</button>
-    </form>
+    <button onclick="createCompoundNoun()">複合名詞を作成</button>
 
     <h2>結果:</h2>
     <p id="result"></p>
 
     <script>
-        // 女性母音置換 (トルスカ語)
-        const femaleReplacementTurska = {
-            "ï": "i", "u": "ü", "ë": "e", "o": "ö", "n": "ņ", "k": "ç", 
-            "g": "ģ", "x": "çh", "l": "ļ"
-        };
-        
-        // 男性母音置換 (トルスカ語)
-        const maleReplacementTurska = {
-            "i": "ï", "ü": "u", "e": "ë", "ö": "o", "ņ": "n", "çh": "x", 
-            "ç": "k", "ģ": "g", "ļ": "l"
-        };
+        function replaceVowels(word, type) {
+            const replacements = {
+                "女性": { 'ï': 'i', 'u': 'ü', 'ë': 'e', 'o': 'ö', 'n': 'ņ', 'k': 'ç', 'g': 'ģ', 'x': 'çh', 'l': 'ļ' },
+                "男性": { 'i': 'ï', 'ü': 'u', 'e': 'ë', 'ö': 'o', 'ņ': 'n', 'çh': 'x', 'ç': 'k', 'ģ': 'g', 'ļ': 'l' }
+            };
+            return word.split('').map(char => replacements[type][char] || char).join('');
+        }
 
-        // 女性母音置換 (ドゥルグ語)
-        const femaleReplacementDurg = {
-            "ï": "i", "u": "ü", "ë": "e", "o": "ö"
-        };
-        
-        // 男性母音置換 (ドゥルグ語)
-        const maleReplacementDurg = {
-            "i": "ï", "ü": "u", "e": "ë", "ö": "o"
-        };
-
-        // 母音分類
-        const femaleVowels = ["i", "ü", "e", "ö"];
-        const maleVowels = ["ï", "u", "ë", "o"];
-        const neutralVowel = "a";
-
-        function generateWord() {
+        function createCompoundNoun() {
             const wordA = document.getElementById("wordA").value;
             const wordB = document.getElementById("wordB").value;
-            const language = document.getElementById("language").value;
-            const aspect = document.getElementById("aspect").value;
             const isPlural = document.getElementById("plural").checked;
             const isOneWord = document.getElementById("oneWord").checked;
+            const language = document.getElementById("language").value;
+            const aspect = document.getElementById("aspect").value;
+            let result = '';
 
-            let result = "";
+            let transformedWordA = wordA;
+            const vowelsInB = Array.from(wordB).filter(char => 'iuëoïü'.includes(char));
+            const vowelsInA = Array.from(wordA).filter(char => 'iüëoïu'.includes(char));
 
-            // 言語によって処理を分ける
-            if (language === "turska") {
-                result = processTurska(wordA, wordB, isPlural, isOneWord, aspect);
-            } else if (language === "durg") {
-                result = processDurg(wordA, wordB, isPlural, isOneWord, aspect);
+            if (language === "トルスカ語") {
+                if (!isPlural) {
+                    if (vowelsInB.includes('i') || vowelsInB.includes('ü') || vowelsInB.includes('e') || vowelsInB.includes('ö')) {
+                        transformedWordA = replaceVowels(wordA, "女性");
+                    } else if (vowelsInB.includes('ï') || vowelsInB.includes('u') || vowelsInB.includes('ë') || vowelsInB.includes('o')) {
+                        transformedWordA = replaceVowels(wordA, "男性");
+                    }
+                    // Add suffix based on vowel checks and word conditions
+                    if (vowelsInB.includes('i') || vowelsInB.includes('ü') || vowelsInB.includes('e') || vowelsInB.includes('ö')) {
+                        transformedWordA += 'ņö';
+                    } else if (vowelsInB.includes('ï') || vowelsInB.includes('u') || vowelsInB.includes('ë') || vowelsInB.includes('o') || !vowelsInB.length) {
+                        transformedWordA += 'no';
+                    }
+                    // Handle special case for -am ending
+                    if (wordA.endsWith('-am')) {
+                        transformedWordA = transformedWordA.replace(/-am$/, aspect === "未完了相" ? 'ca' : 'cta');
+                    }
+                } else {
+                    // Handle plural logic
+                    // Similar logic as above, add specific suffixes for plural
+                    if (vowelsInB.includes('i') || vowelsInB.includes('ü') || vowelsInB.includes('e') || vowelsInB.includes('ö')) {
+                        transformedWordA = replaceVowels(wordA, "女性") + 'ļöņ';
+                    } else if (vowelsInB.includes('ï') || vowelsInB.includes('u') || vowelsInB.includes('ë') || vowelsInB.includes('o') || !vowelsInB.length) {
+                        transformedWordA = replaceVowels(wordA, "男性") + 'ron';
+                    }
+
+                    // Check for -am ending in plural
+                    if (wordA.endsWith('-am')) {
+                        transformedWordA = transformedWordA.replace(/-am$/, aspect === "未完了相" ? 'cala' : 'calta');
+                    }
+                }
             }
 
-            // 結果を表示
+            // Final assembly of words
+            result = isOneWord ? transformedWordA + wordB + 'ra' : transformedWordA + ' ' + wordB + 'ra';
             document.getElementById("result").innerText = result;
-        }
-
-        function processTurska(wordA, wordB, isPlural, isOneWord, aspect) {
-            let modifiedWordA = wordA;
-            let suffixA = "";
-            let suffixB = "";
-            
-            // 母音置換を実行
-            if (containsAny(wordB, femaleVowels)) {
-                modifiedWordA = replaceVowels(modifiedWordA, femaleReplacementTurska);
-                suffixA = isPlural ? "ļöņ" : "ņö";
-            } else if (containsAny(wordB, maleVowels)) {
-                modifiedWordA = replaceVowels(modifiedWordA, maleReplacementTurska);
-                suffixA = isPlural ? "ron" : "no";
-            } else if (containsVowel(wordB, neutralVowel)) {
-                suffixA = isPlural ? "ron" : "no";
-            }
-
-            // 語尾処理
-            if (wordA.endsWith("-am")) {
-                modifiedWordA = handleAmEnding(modifiedWordA, aspect, isPlural, isOneWord);
-            } else if (wordA.endsWith("-ïm") || wordA.endsWith("-im")) {
-                modifiedWordA = handleImEnding(modifiedWordA, aspect, isPlural, isOneWord);
-            }
-
-            suffixB = isPlural ? "ra" : "";
-
-            return combineWords(modifiedWordA, wordB, suffixA, suffixB, isOneWord);
-        }
-
-        function processDurg(wordA, wordB, isPlural, isOneWord, aspect) {
-            let modifiedWordA = wordA;
-            let suffixA = "";
-            let suffixB = "";
-
-            // 母音置換を実行
-            if (containsAny(wordB, femaleVowels)) {
-                modifiedWordA = replaceVowels(modifiedWordA, femaleReplacementDurg);
-                suffixA = isPlural ? "’ün" : "nü";
-                suffixB = isPlural ? "’i" : "";
-            } else if (containsAny(wordB, maleVowels)) {
-                modifiedWordA = replaceVowels(modifiedWordA, maleReplacementDurg);
-                suffixA = isPlural ? "’un" : "nu";
-                suffixB = isPlural ? "’u" : "";
-            } else if (containsVowel(wordB, neutralVowel)) {
-                suffixA = isPlural ? "’un" : "nu";
-                suffixB = isPlural ? "’u" : "";
-            }
-
-            // 語尾処理
-            if (wordA.endsWith("-um") || wordA.endsWith("-üm")) {
-                modifiedWordA = handleUmEnding(modifiedWordA, aspect, isPlural, isOneWord);
-            }
-
-            return combineWords(modifiedWordA, wordB, suffixA, suffixB, isOneWord);
-        }
-
-        function containsAny(word, vowels) {
-            return vowels.some(vowel => word.includes(vowel));
-        }
-
-        function containsVowel(word, vowel) {
-            return word.includes(vowel);
-        }
-
-        function replaceVowels(word, replacementMap) {
-            return word.replace(/[ïuëonkgxçhl]/g, match => replacementMap[match] || match);
-        }
-
-        function handleAmEnding(word, aspect, isPlural, isOneWord) {
-            if (isPlural) {
-                return aspect === "imperfect" ? word.replace("-am", "cala") : word.replace("-am", "calta");
-            }
-            return aspect === "imperfect" ? word.replace("-am", "ca") : word.replace("-am", "cta");
-        }
-
-        function handleImEnding(word, aspect, isPlural, isOneWord) {
-            if (isPlural) {
-                return aspect === "imperfect" ? word.replace(/-ïm|-im/, match => match === "-ïm" ? "kala" : "çala") : word.replace(/-ïm|-im/, match => match === "-ïm" ? "kalta" : "çalta");
-            }
-            return aspect === "imperfect" ? word.replace(/-ïm|-im/, match => match === "-ïm" ? "ka" : "ça") : word.replace(/-ïm|-im/, match => match === "-ïm" ? "kta" : "çta");
-        }
-
-        function handleUmEnding(word, aspect, isPlural, isOneWord) {
-            if (isPlural) {
-                return aspect === "imperfect" ? word.replace(/-um|-üm/, match => match === "-um" ? "dulu" : "dülü") : word.replace(/-um|-üm/, match => match === "-um" ? "dullu" : "düllü");
-            }
-            return aspect === "imperfect" ? word.replace(/-um|-üm/, match => match === "-um" ? "du" : "dü") : word.replace(/-um|-üm/, match => match === "-um" ? "duka" : "düka");
-        }
-
-        function combineWords(modifiedWordA, wordB, suffixA, suffixB, isOneWord) {
-            if (isOneWord) {
-                return modifiedWordA + suffixA + wordB + suffixB;
-            }
-            return modifiedWordA + suffixA + " " + wordB + suffixB;
         }
     </script>
 </body>
