@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>トルスカ語・ドゥルグ語複合名詞作成機</title>
+</head>
+<body>
+    <h1>トルスカ語・ドゥルグ語複合名詞作成機</h1>
+    <form id="word-form">
+        <label for="wordA">単語A:</label>
+        <input type="text" id="wordA" name="wordA"><br><br>
+
+        <label for="wordB">単語B:</label>
+        <input type="text" id="wordB" name="wordB"><br><br>
+
+        <label for="language">言語選択:</label>
+        <select id="language">
+            <option value="torsk">トルスカ語</option>
+            <option value="durg">ドゥルグ語</option>
+        </select><br><br>
+
+        <label for="aspect">動詞の相:</label>
+        <select id="aspect">
+            <option value="imperfective">未完了相</option>
+            <option value="perfective">完了相</option>
+        </select><br><br>
+
+        <label for="plural">複数形:</label>
+        <input type="checkbox" id="plural"><br><br>
+
+        <label for="singleWord">1語にする:</label>
+        <input type="checkbox" id="singleWord"><br><br>
+
+        <button type="button" onclick="generateCompound()">生成</button>
+    </form>
+
+    <h2>結果:</h2>
+    <p id="result"></p>
+
+    <script src="compound.js"></script>
+</body>
+</html>
