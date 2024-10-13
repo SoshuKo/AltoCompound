@@ -2,12 +2,11 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>トルスカ語・ドゥルグ語複合名詞作成機</title>
+    <title>トルスカ語複合名詞作成機</title>
     <script>
         function createCompoundNoun() {
             const wordA = document.getElementById("wordA").value;
             const wordB = document.getElementById("wordB").value;
-            const language = document.getElementById("language").value;
             const nounType = document.getElementById("nounType").value;
             const aspect = document.getElementById("aspect").value;
             const plural = document.getElementById("plural").checked;
@@ -25,116 +24,57 @@
                 return word.split('').map(char => replacement[char] || char).join('');
             }
 
-            if (language === "トルスカ語") {
-                if (nounType === "名詞+名詞") {
-                    if (!plural) {
-                        if (femaleVowels.some(v => wordB.includes(v))) {
-                            transformedWordA = replaceVowels(wordA, femaleReplacement) + 'ņö';
-                        } else if (maleVowels.some(v => wordB.includes(v))) {
-                            transformedWordA = replaceVowels(wordA, maleReplacement) + 'no';
-                        } else {
-                            transformedWordA += 'no';
-                        }
+            if (nounType === "名詞+名詞") {
+                if (!plural) {
+                    if (femaleVowels.some(v => wordB.includes(v))) {
+                        transformedWordA = replaceVowels(wordA, femaleReplacement) + 'ņö';
+                    } else if (maleVowels.some(v => wordB.includes(v))) {
+                        transformedWordA = replaceVowels(wordA, maleReplacement) + 'no';
                     } else {
-                        if (femaleVowels.some(v => wordB.includes(v))) {
-                            transformedWordA = replaceVowels(wordA, femaleReplacement) + 'ļöņ';
-                        } else if (maleVowels.some(v => wordB.includes(v))) {
-                            transformedWordA = replaceVowels(wordA, maleReplacement) + 'ron';
-                        } else {
-                            transformedWordA += 'ron';
-                        }
-                        transformedWordB += 'ra';
+                        transformedWordA += 'no';
                     }
-                } else if (nounType === "形容詞/自動詞分詞+名詞") {
-                    if (!singleWord) {
-                        if (aspect === "未完了相") {
-                            transformedWordA = wordA.replace('-am', 'ca');
-                        } else if (aspect === "完了相") {
-                            transformedWordA = wordA.replace('-am', 'cta');
-                        }
-                        transformedWordB += 'ra';
+                } else {
+                    if (femaleVowels.some(v => wordB.includes(v))) {
+                        transformedWordA = replaceVowels(wordA, femaleReplacement) + 'ļöņ';
+                    } else if (maleVowels.some(v => wordB.includes(v))) {
+                        transformedWordA = replaceVowels(wordA, maleReplacement) + 'ron';
                     } else {
-                        if (femaleVowels.some(v => wordB.includes(v))) {
-                            transformedWordA = replaceVowels(wordA.replace('-am', aspect === "未完了相" ? 'ca' : 'cta'), femaleReplacement);
-                        } else if (maleVowels.some(v => wordB.includes(v))) {
-                            transformedWordA = replaceVowels(wordA.replace('-am', aspect === "未完了相" ? 'ca' : 'cta'), maleReplacement);
-                        } else {
-                            transformedWordA = wordA.replace('-am', aspect === "未完了相" ? 'ca' : 'cta');
-                        }
+                        transformedWordA += 'ron';
                     }
-                } else if (nounType === "他動詞分詞+名詞") {
-                    if (!singleWord) {
-                        if (aspect === "未完了相") {
-                            transformedWordA = wordA.replace(/-ïm|-im/g, match => match === '-ïm' ? 'ka' : 'ça');
-                        } else if (aspect === "完了相") {
-                            transformedWordA = wordA.replace(/-ïm|-im/g, match => match === '-ïm' ? 'kta' : 'çta');
-                        }
-                        transformedWordB += 'ra';
+                    transformedWordB += 'ra';
+                }
+            } else if (nounType === "形容詞/自動詞分詞+名詞") {
+                if (!singleWord) {
+                    if (aspect === "未完了相") {
+                        transformedWordA = wordA.replace('-am', 'ca');
+                    } else if (aspect === "完了相") {
+                        transformedWordA = wordA.replace('-am', 'cta');
+                    }
+                    transformedWordB += 'ra';
+                } else {
+                    if (femaleVowels.some(v => wordB.includes(v))) {
+                        transformedWordA = replaceVowels(wordA.replace('-am', aspect === "未完了相" ? 'ca' : 'cta'), femaleReplacement);
+                    } else if (maleVowels.some(v => wordB.includes(v))) {
+                        transformedWordA = replaceVowels(wordA.replace('-am', aspect === "未完了相" ? 'ca' : 'cta'), maleReplacement);
                     } else {
-                        if (femaleVowels.some(v => wordB.includes(v))) {
-                            transformedWordA = replaceVowels(wordA.replace(/-ïm|-im/g, match => match === '-ïm' ? 'ka' : 'ça'), femaleReplacement);
-                        } else if (maleVowels.some(v => wordB.includes(v))) {
-                            transformedWordA = replaceVowels(wordA.replace(/-ïm|-im/g, match => match === '-ïm' ? 'ka' : 'ça'), maleReplacement);
-                        } else {
-                            transformedWordA = wordA.replace(/-ïm|-im/g, match => match === '-ïm' ? 'ka' : 'ça');
-                        }
+                        transformedWordA = wordA.replace('-am', aspect === "未完了相" ? 'ca' : 'cta');
                     }
                 }
-            } else if (language === "ドゥルグ語") {
-                if (nounType === "名詞+名詞") {
-                    if (!plural) {
-                        if (femaleVowels.some(v => wordB.includes(v))) {
-                            transformedWordA = replaceVowels(wordA, femaleReplacement) + 'nü';
-                        } else if (maleVowels.some(v => wordB.includes(v))) {
-                            transformedWordA = replaceVowels(wordA, maleReplacement) + 'nu';
-                        } else {
-                            transformedWordA += 'nu';
-                        }
-                    } else {
-                        if (femaleVowels.some(v => wordB.includes(v))) {
-                            transformedWordA = replaceVowels(wordA, femaleReplacement) + '’ün';
-                            transformedWordB += '’i';
-                        } else if (maleVowels.some(v => wordB.includes(v))) {
-                            transformedWordA = replaceVowels(wordA, maleReplacement) + '’un';
-                            transformedWordB += '’u';
-                        } else {
-                            transformedWordA += '’un';
-                            transformedWordB += '’u';
-                        }
+            } else if (nounType === "他動詞分詞+名詞") {
+                if (!singleWord) {
+                    if (aspect === "未完了相") {
+                        transformedWordA = wordA.replace(/-ïm|-im/g, match => match === '-ïm' ? 'ka' : 'ça');
+                    } else if (aspect === "完了相") {
+                        transformedWordA = wordA.replace(/-ïm|-im/g, match => match === '-ïm' ? 'kta' : 'çta');
                     }
-                } else if (nounType === "形容詞/自動詞分詞+名詞") {
-                    if (!singleWord) {
-                        if (aspect === "未完了相") {
-                            transformedWordA = wordA.replace(/-um|-üm/g, match => match === '-um' ? 'du' : 'dü');
-                        } else if (aspect === "完了相") {
-                            transformedWordA = wordA.replace(/-um|-üm/g, match => match === '-um' ? 'dru' : 'drü');
-                        }
-                        transformedWordB += wordB.includes(femaleVowels) ? '’i' : '’u';
+                    transformedWordB += 'ra';
+                } else {
+                    if (femaleVowels.some(v => wordB.includes(v))) {
+                        transformedWordA = replaceVowels(wordA.replace(/-ïm|-im/g, match => match === '-ïm' ? 'ka' : 'ça'), femaleReplacement);
+                    } else if (maleVowels.some(v => wordB.includes(v))) {
+                        transformedWordA = replaceVowels(wordA.replace(/-ïm|-im/g, match => match === '-ïm' ? 'ka' : 'ça'), maleReplacement);
                     } else {
-                        if (femaleVowels.some(v => wordB.includes(v))) {
-                            transformedWordA = replaceVowels(wordA.replace(/-um|-üm/g, match => match === '-um' ? 'du' : 'dü'), femaleReplacement);
-                        } else if (maleVowels.some(v => wordB.includes(v))) {
-                            transformedWordA = replaceVowels(wordA.replace(/-um|-üm/g, match => match === '-um' ? 'du' : 'dü'), maleReplacement);
-                        } else {
-                            transformedWordA = wordA.replace(/-um|-üm/g, match => match === '-um' ? 'du' : 'dü');
-                        }
-                    }
-                } else if (nounType === "他動詞分詞+名詞") {
-                    if (!singleWord) {
-                        if (aspect === "未完了相") {
-                            transformedWordA = wordA.replace(/-am/g, wordA.includes(femaleVowels) ? 'gü' : 'gu');
-                        } else if (aspect === "完了相") {
-                            transformedWordA = wordA.replace(/-am/g, wordA.includes(femaleVowels) ? 'grü' : 'gru');
-                        }
-                        transformedWordB += wordB.includes(femaleVowels) ? '’i' : '’u';
-                    } else {
-                        if (femaleVowels.some(v => wordB.includes(v))) {
-                            transformedWordA = replaceVowels(wordA.replace(/-am/g, wordA.includes(femaleVowels) ? 'gü' : 'gu'), femaleReplacement);
-                        } else if (maleVowels.some(v => wordB.includes(v))) {
-                            transformedWordA = replaceVowels(wordA.replace(/-am/g, wordA.includes(femaleVowels) ? 'gü' : 'gu'), maleReplacement);
-                        } else {
-                            transformedWordA = wordA.replace(/-am/g, wordA.includes(femaleVowels) ? 'gü' : 'gu');
-                        }
+                        transformedWordA = wordA.replace(/-ïm|-im/g, match => match === '-ïm' ? 'ka' : 'ça');
                     }
                 }
             }
@@ -142,24 +82,24 @@
             let result = singleWord ? transformedWordA + transformedWordB : transformedWordA + " " + transformedWordB;
 
             document.getElementById("result").innerText = result;
+
+            if (result.length > 15) {
+                document.getElementById("recommendation").innerText = "「一語にする」を推奨します。";
+            } else {
+                document.getElementById("recommendation").innerText = "";
+            }
         }
     </script>
 </head>
 <body>
-    <h1>トルスカ語・ドゥルグ語複合名詞作成機</h1>
+    <h1>トルスカ語複合名詞作成機</h1>
     <p>名詞の場合は単数形・主格を、動詞・形容詞の場合は不定形を入力してください（=辞書に載っている形を入力してください）。</p>
-    <p>自動詞とは辞書形の語尾が-am（トルスカ語）/-um, -üm（ドゥルグ語）、他動詞とは辞書形の語尾が-ïm, -im（トルスカ語）/-am（ドゥルグ語）のものです。</p>
+    <p>自動詞とは辞書形の語尾が-am、他動詞とは辞書形の語尾が-ïm, -imのものです。</p>
     <label for="wordA">単語A:</label>
     <input type="text" id="wordA">
     <br>
     <label for="wordB">単語B:</label>
     <input type="text" id="wordB">
-    <br>
-    <label for="language">言語:</label>
-    <select id="language">
-        <option value="トルスカ語">トルスカ語</option>
-        <option value="ドゥルグ語">ドゥルグ語</option>
-    </select>
     <br>
     <label for="nounType">複合名詞のタイプ:</label>
     <select id="nounType">
@@ -183,6 +123,6 @@
     <button onclick="createCompoundNoun()">生成</button>
     <h2>結果:</h2>
     <p id="result"></p>
+    <p id="recommendation" style="color:red;"></p>
 </body>
 </html>
-
