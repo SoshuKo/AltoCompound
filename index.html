@@ -24,7 +24,7 @@
             'e': 'ë', 
             'ö': 'o', 
             'ņ': 'n', 
-            'çh': 'x',  // ここを修正
+            'č': 'x',  // ここを修正
             'ç': 'k',   // çhとçの置換は異なるもの
             'ģ': 'g', 
             'ļ': 'l' 
@@ -34,6 +34,8 @@
                 return word.split('').map(char => replacement[char] || char).join('');
             }
 
+            transformedWordA = transformedWordA.replace(/çh/g, 'č');
+            
             if (nounType === "名詞+名詞") {
                 if (!plural) {
                     if (femaleVowels.some(v => wordB.includes(v))) {
