@@ -4,101 +4,55 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>トルスカ語・ドゥルグ語複合名詞作成機</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        input[type="text"], select { width: 300px; margin: 5px 0; }
-        button { margin-top: 10px; }
-    </style>
 </head>
 <body>
     <h1>トルスカ語・ドゥルグ語複合名詞作成機</h1>
+
     <p>名詞の場合は単数形・主格を、動詞・形容詞の場合は不定形を入力してください（=辞書に載っている形を入力してください）。</p>
+    <p>自動詞とは辞書形の語尾が-am（トルスカ語）/-um, -üm（ドゥルグ語）、他動詞とは辞書形の語尾が-ïm, -im（トルスカ語）/-am（ドゥルグ語）のものです。</p>
+
+    <label for="lang">言語を選択:</label>
+    <select id="lang">
+        <option value="torska">トルスカ語</option>
+        <option value="durg">ドゥルグ語</option>
+    </select>
+    
+    <br><br>
     
     <label for="wordA">単語A:</label>
-    <input type="text" id="wordA"><br>
-
+    <input type="text" id="wordA">
+    <br><br>
+    
     <label for="wordB">単語B:</label>
-    <input type="text" id="wordB"><br>
-
-    <label for="language">言語:</label>
-    <select id="language">
-        <option value="トルスカ語">トルスカ語</option>
-        <option value="ドゥルグ語">ドゥルグ語</option>
-    </select><br>
-
-    <label for="aspect">相:</label>
+    <input type="text" id="wordB">
+    <br><br>
+    
+    <label for="structure">構造を選択:</label>
+    <select id="structure">
+        <option value="noun_noun">名詞+名詞</option>
+        <option value="adj_verb_noun">形容詞/自動詞分詞+名詞</option>
+        <option value="trans_verb_noun">他動詞分詞+名詞</option>
+    </select>
+    <br><br>
+    
+    <label for="aspect">相を選択:</label>
     <select id="aspect">
-        <option value="未完了相">未完了相</option>
-        <option value="完了相">完了相</option>
-    </select><br>
+        <option value="imperfect">未完了相</option>
+        <option value="perfect">完了相</option>
+    </select>
+    <br><br>
+    
+    <label for="plural">複数形:</label>
+    <input type="checkbox" id="plural">
+    <br><br>
 
-    <label><input type="checkbox" id="plural"> 複数形</label><br>
-    <label><input type="checkbox" id="oneWord"> 1語にする</label><br>
+    <label for="merge">1語にする:</label>
+    <input type="checkbox" id="merge">
+    <br><br>
 
-    <button onclick="createCompoundNoun()">複合名詞を作成</button>
+    <button onclick="generate()">作成</button>
+    <p>生成結果: <span id="result"></span></p>
 
-    <h2>結果:</h2>
-    <p id="result"></p>
-
-    <script>
-        function replaceVowels(word, type) {
-            const replacements = {
-                "女性": { 'ï': 'i', 'u': 'ü', 'ë': 'e', 'o': 'ö', 'n': 'ņ', 'k': 'ç', 'g': 'ģ', 'x': 'çh', 'l': 'ļ' },
-                "男性": { 'i': 'ï', 'ü': 'u', 'e': 'ë', 'ö': 'o', 'ņ': 'n', 'çh': 'x', 'ç': 'k', 'ģ': 'g', 'ļ': 'l' }
-            };
-            return word.split('').map(char => replacements[type][char] || char).join('');
-        }
-
-        function createCompoundNoun() {
-            const wordA = document.getElementById("wordA").value;
-            const wordB = document.getElementById("wordB").value;
-            const isPlural = document.getElementById("plural").checked;
-            const isOneWord = document.getElementById("oneWord").checked;
-            const language = document.getElementById("language").value;
-            const aspect = document.getElementById("aspect").value;
-            let result = '';
-
-            let transformedWordA = wordA;
-            const vowelsInB = Array.from(wordB).filter(char => 'iuëoïü'.includes(char));
-            const vowelsInA = Array.from(wordA).filter(char => 'iüëoïu'.includes(char));
-
-            if (language === "トルスカ語") {
-                if (!isPlural) {
-                    if (vowelsInB.includes('i') || vowelsInB.includes('ü') || vowelsInB.includes('e') || vowelsInB.includes('ö')) {
-                        transformedWordA = replaceVowels(wordA, "女性");
-                    } else if (vowelsInB.includes('ï') || vowelsInB.includes('u') || vowelsInB.includes('ë') || vowelsInB.includes('o')) {
-                        transformedWordA = replaceVowels(wordA, "男性");
-                    }
-                    // Add suffix based on vowel checks and word conditions
-                    if (vowelsInB.includes('i') || vowelsInB.includes('ü') || vowelsInB.includes('e') || vowelsInB.includes('ö')) {
-                        transformedWordA += 'ņö';
-                    } else if (vowelsInB.includes('ï') || vowelsInB.includes('u') || vowelsInB.includes('ë') || vowelsInB.includes('o') || !vowelsInB.length) {
-                        transformedWordA += 'no';
-                    }
-                    // Handle special case for -am ending
-                    if (wordA.endsWith('-am')) {
-                        transformedWordA = transformedWordA.replace(/-am$/, aspect === "未完了相" ? 'ca' : 'cta');
-                    }
-                } else {
-                    // Handle plural logic
-                    // Similar logic as above, add specific suffixes for plural
-                    if (vowelsInB.includes('i') || vowelsInB.includes('ü') || vowelsInB.includes('e') || vowelsInB.includes('ö')) {
-                        transformedWordA = replaceVowels(wordA, "女性") + 'ļöņ';
-                    } else if (vowelsInB.includes('ï') || vowelsInB.includes('u') || vowelsInB.includes('ë') || vowelsInB.includes('o') || !vowelsInB.length) {
-                        transformedWordA = replaceVowels(wordA, "男性") + 'ron';
-                    }
-
-                    // Check for -am ending in plural
-                    if (wordA.endsWith('-am')) {
-                        transformedWordA = transformedWordA.replace(/-am$/, aspect === "未完了相" ? 'cala' : 'calta');
-                    }
-                }
-            }
-
-            // Final assembly of words
-            result = isOneWord ? transformedWordA + wordB + 'ra' : transformedWordA + ' ' + wordB + 'ra';
-            document.getElementById("result").innerText = result;
-        }
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
